@@ -1,4 +1,5 @@
 import json
+import numpy
 
 from calc import is_counter_clockwise
 from util import create_svg
@@ -36,4 +37,5 @@ for key, value in data["nuc"].items():
 
     create_svg(points, key)
 
+    break
 
