@@ -2,7 +2,7 @@ from calc import is_counter_clockwise
 from dio import get_json_data_from_number
 import numpy as np
 
-from util import create_svg
+from utils import create_svg
 
 PATH = "/Dataset/Kurume_Dataset/Celltype_Dataset_v2/2024/2024_10_30/JSON/"
 
