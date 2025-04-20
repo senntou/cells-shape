@@ -2,7 +2,7 @@ from calc import is_counter_clockwise
 from dio import get_json_data_from_number
 import numpy as np
 
-from utils import create_svg
+from utils import alter_points, create_svg
 
 PATH = "/Dataset/Kurume_Dataset/Celltype_Dataset_v2/2024/2024_10_30/JSON/"
 
@@ -24,8 +24,11 @@ if __name__ == "__main__":
     for key, value in data["nuc"].items():
         points = convert_points_format(value["contour"])
 
-        if is_counter_clockwise(points):
-            print(f"{key} : counter-clockwise")
+        assert is_counter_clockwise(points) == False, (
+            "key : " + key + " の観測点は時計回りです"
+        )
+
+        points = alter_points(points)
 
         create_svg(points, key)
 

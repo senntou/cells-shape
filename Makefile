@@ -5,4 +5,4 @@ clean :
 	rm -rf output
 
 test :
-	pytest tests/*.py
+	pytest tests/*.py -s
