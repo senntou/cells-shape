@@ -8,7 +8,7 @@ if not os.path.exists("output"):
 
 
 # points = [[x1, y1], [x2, y2], ..., [xn, yn], [x1, y1]]
-def create_svg(points, id):
+def create_svg(points, id, show_number=False):
     x, y = zip(*points)
 
     # グラフの作成
@@ -16,8 +16,9 @@ def create_svg(points, id):
     plt.plot(x, y, marker="o", linestyle="-", color="blue")
 
     # 番号を振ってラベルを表示
-    # for i, (x_i, y_i) in enumerate(points):
-    #     plt.text(x_i + 0.1, y_i + 0.1, str(i), fontsize=10, color="black")
+    if show_number:
+        for i, (x_i, y_i) in enumerate(points):
+            plt.text(x_i + 0.1, y_i + 0.1, str(i), fontsize=10, color="black")
 
     # 軸のラベルとグリッド（任意）
     plt.xlabel("X")
@@ -69,3 +70,22 @@ def alter_points(points, NUM_POINTS=1000):
         new_points.append(new_point)
 
     return np.array(new_points)
+
+
+# 画像から見切れているかどうかを判定する
+# points = [[x1, y1], [x2, y2], ..., [xn, yn], [x1, y1]]
+def is_out_of_image(points, image_size):
+    # 画像のサイズを取得
+    height, width = image_size
+    margin = 0.001
+
+    x_min = 0 + margin
+    x_max = width - margin
+    y_min = 0 + margin
+    y_max = height - margin
+
+    # 各点が画像の範囲内にあるかどうかをチェック
+    for point in points:
+        if not (x_min <= point[0] <= x_max and y_min <= point[1] <= y_max):
+            return True  # 画像の範囲外にある点が見つかった
+    return False  # すべての点が画像の範囲内にある
