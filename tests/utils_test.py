@@ -11,6 +11,7 @@ def test_alter_points():
     answer = np.linspace(0, 5, num=1001)
     answer = np.column_stack((answer, answer))
     answer = answer[:-1]
+    answer = np.append(answer, [answer[0]], axis=0)
 
     assert len(res) == len(answer), "Length of altered points is incorrect"
     assert np.allclose(res, answer), "Altered points do not match expected values"

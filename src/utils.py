@@ -27,7 +27,7 @@ def create_svg(points, id, show_number=False):
     plt.axis("equal")  # 正方形スケールで表示
 
     # SVG形式で保存（PDFにしたい場合は 'output.pdf' に変更）
-    plt.savefig("output/output_" + id + ".png", format="png")
+    plt.savefig("output/output_" + id + ".svg", format="svg")
     plt.close()
 
 
@@ -68,6 +68,9 @@ def alter_points(points, NUM_POINTS=1000):
             points[index][1] + ratio * (points[index + 1][1] - points[index][1]),
         )
         new_points.append(new_point)
+
+    # 最後の点を追加して閉じる
+    new_points.append(new_points[0])
 
     return np.array(new_points)
 
