@@ -69,6 +69,9 @@ def alter_points(points, NUM_POINTS=1000):
         )
         new_points.append(new_point)
 
+    # 最後の点を追加して閉じる
+    new_points.append(new_points[0])
+
     return np.array(new_points)
 
 
