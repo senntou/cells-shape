@@ -3,6 +3,7 @@ all :
 
 clean :
 	rm -rf output
+	rm -rf output_whole
 
 test :
 	pytest tests/*.py -s

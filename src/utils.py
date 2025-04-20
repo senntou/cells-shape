@@ -13,7 +13,7 @@ def create_svg(points, id, show_number=False):
 
     # グラフの作成
     plt.figure(figsize=(6, 6))
-    plt.plot(x, y, marker="o", linestyle="-", color="blue")
+    plt.plot(x, y, marker="o", linestyle="-", color="blue", markersize=0)
 
     # 番号を振ってラベルを表示
     if show_number:
@@ -80,9 +80,9 @@ def is_out_of_image(points, image_size):
     margin = 0.001
 
     x_min = 0 + margin
-    x_max = width - margin
+    x_max = width - 1 - margin
     y_min = 0 + margin
-    y_max = height - margin
+    y_max = height - 1 - margin
 
     # 各点が画像の範囲内にあるかどうかをチェック
     for point in points:

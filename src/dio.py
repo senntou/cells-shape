@@ -1,7 +1,11 @@
 import json
-
+from PIL import Image, ImageDraw
+import os
 
 FILE_IDS = [i for i in range(4, 14)]
+
+if not os.path.exists("output_whole"):
+    os.makedirs("output_whole")
 
 
 def get_file_names():
@@ -28,3 +32,27 @@ def get_tif_path_from_number(file_number):
     file_name = f"kurume-policy_fl_c{id:03d}_v001_he.tif"
 
     return PATH + file_name
+
+
+# contoursは[[x1, y1], [x2, y2], ..., [xn, yn]]
+def draw_whole_image_with_contours(file_number, contours):
+    tif_path = get_tif_path_from_number(file_number)
+
+    with Image.open(tif_path) as img:
+        img = img.convert("RGB")  # RGBに変換
+        draw = ImageDraw.Draw(img)
+
+        for contour in contours:
+            for i in range(len(contour) - 1):
+                draw.line(
+                    (
+                        contour[i][0],
+                        contour[i][1],
+                        contour[i + 1][0],
+                        contour[i + 1][1],
+                    ),
+                    fill=(255, 0, 0),
+                    width=2,
+                )
+
+    img.save(f"output_whole/output_{file_number}.png")

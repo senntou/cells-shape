@@ -1,5 +1,5 @@
 from calc import is_counter_clockwise
-from dio import get_json_data_from_number
+from dio import get_json_data_from_number, draw_whole_image_with_contours
 import numpy as np
 
 from image.size import get_image_size_from_file_number
@@ -16,13 +16,15 @@ if __name__ == "__main__":
 
     FILE_NUM = 0
     data = get_json_data_from_number(FILE_NUM)
-
     img_size = get_image_size_from_file_number(FILE_NUM)
 
     # 総数を表示
     print("合計データ数 : ", len(data["nuc"]))
 
     cnt = 0
+
+    contours = []
+    contours_plane = []
 
     for key, value in data["nuc"].items():
         points = convert_points_format(value["contour"])
@@ -35,10 +37,14 @@ if __name__ == "__main__":
             "key : " + key + " の観測点は反時計回りです"
         )
 
+        contours_plane.append(points)
         points = alter_points(points)
 
-        create_svg(points, key, show_number=False)
+        # create_svg(points, key, show_number=False)
 
         cnt += 1
+        contours.append(points)
+
+    draw_whole_image_with_contours(FILE_NUM, contours_plane)
 
     print("有効なデータ数 : ", cnt)
