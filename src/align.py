@@ -1,6 +1,9 @@
 import numpy as np
 from matplotlib.path import Path
 
+from calc import is_counter_clockwise
+from utils import alter_points
+
 
 # contour = [[x1, y1], [x2, y2], ..., [xn, yn], [x1, y1]]
 def align_contour(contour):
@@ -8,13 +11,34 @@ def align_contour(contour):
         contour[0], contour[-1]
     ), "多角形の頂点は閉じている必要があります。"
 
+    # 並進
     centroid = calculate_polygon_centroid(contour)
     new_contour = contour - centroid
 
+    # 回転
     v1, v2 = calculate_principal_axes(new_contour[:-1])
     new_contour = np.dot(new_contour, np.array([v1, v2]).T)
 
-    return new_contour
+    # 内挿
+    new_contour = insert_point_to_contour(new_contour)
+
+    # 点の追加
+    new_contour_adjusted = alter_points(new_contour, NUM_POINTS=1000)
+
+    # 裏表（上下）の判定・反転
+    if is_reverse(new_contour_adjusted):
+        new_contour = np.flipud(new_contour)
+        new_contour_adjusted = np.flipud(new_contour_adjusted)
+
+    # 反時計回りに並べ替え
+    if is_counter_clockwise(new_contour):
+        new_contour = new_contour[::-1]
+        new_contour_adjusted = new_contour_adjusted[::-1]
+
+    new_contour = np.array(new_contour)
+    new_contour_adjusted = np.array(new_contour_adjusted)
+
+    return new_contour, new_contour_adjusted
 
 
 # vertices = [[x1, y1], [x2, y2], ..., [xn, yn], [x1, y1]]
@@ -74,8 +98,7 @@ def calculate_principal_axes(contour):
 
     # PCAを使用して主成分を計算
     contour = np.array(contour)
-    points = get_inside_points(contour[:-1], resolution=0.1)
-    print("points : ", len(points))
+    points = get_inside_points(contour[:-1], resolution=0.5)
     mean = np.mean(points, axis=0)
     centered_points = points - mean
 
@@ -99,3 +122,48 @@ def calculate_principal_axes(contour):
     ), f"主成分の短軸の長さが1ではありません。{np.linalg.norm(principal_axis_2)}"
 
     return principal_axis_1, principal_axis_2
+
+
+# 輪郭がx軸と交わる場所に点を追加する
+# contour = [[x1, y1], [x2, y2], ..., [xn, yn], [x1, y1]]
+def insert_point_to_contour(contour):
+    assert np.allclose(
+        contour[0], contour[-1]
+    ), "多角形の頂点は閉じている必要があります。"
+
+    new_contour = [contour[0]]  # 最初の点を追加
+
+    for i in range(len(contour) - 1):
+        p1 = contour[i]
+        p2 = contour[i + 1]
+
+        # x軸と交わる点を計算
+        if (p1[1] > 0 and p2[1] < 0) or (p1[1] < 0 and p2[1] > 0):
+            x_intersection = (p1[0] * p2[1] - p2[0] * p1[1]) / (p2[1] - p1[1])
+            new_contour.append([x_intersection, 0])
+
+        new_contour.append(p2)
+
+    return new_contour
+
+
+# 形の上下を判定する
+# 上側と下側の輪郭線の長さを比較する
+# 既に等間隔に分割されていることを前提とする
+# contour = [[x1, y1], [x2, y2], ..., [xn, yn], [x1, y1]]
+def is_reverse(contour) -> bool:
+    assert np.allclose(
+        contour[0], contour[-1]
+    ), "多角形の頂点は閉じている必要があります。"
+    assert np.allclose(
+        np.linalg.norm(contour[0] - contour[1]),
+        np.linalg.norm(contour[-1] - contour[-2]),
+    ), "輪郭線の長さが等間隔ではありません。"
+
+    # 上側と下側の輪郭点の数をカウント
+    upper_count = np.sum(contour[:-1][:, 1] > 0)
+    lower_count = np.sum(contour[:-1][:, 1] < 0)
+
+    # 点の数が多いほうが上側
+    # よって、上側の点の数が少ない場合は反転
+    return upper_count < lower_count

@@ -1,3 +1,4 @@
+from sys import exc_info
 from types import new_class
 from matplotlib.cbook import contiguous_regions
 import numpy as np
@@ -9,6 +10,7 @@ from align import (
     calculate_polygon_centroid,
     calculate_principal_axes,
     get_inside_points,
+    insert_point_to_contour,
 )
 from dio import get_json_data_from_number
 from utils import alter_points
@@ -24,11 +26,10 @@ def test_align_contour():
     for contour in contours:
         id = ids[idx]
         idx += 1
-        aligned_contour = align_contour(contour)
+        aligned_contour, _ = align_contour(contour)
+
         assert aligned_contour is not None, "整列された輪郭が計算されていません。"
-        assert len(aligned_contour) == len(
-            contour
-        ), "整列された輪郭の長さがもとの輪郭と一致しません。"
+        assert type(aligned_contour) == np.ndarray, "整列された輪郭の型が不正です。"
 
         # contourとaligned_contourをグラフに描画
         plt.figure(figsize=(6, 6))
@@ -108,7 +109,6 @@ def contour_data_provider():
         points = value["contour"]
         points.append(points[0])
         points = np.array(points)
-        points = alter_points(points)
         contours.append(points)
 
     return ids, contours
@@ -257,3 +257,32 @@ def test_get_inside_points_triangle():
     plt.axis("equal")  # 正方形スケールで表示
     plt.savefig(f"output_test/output_inside_points_triangle.png", format="png")
     plt.close()
+
+
+def test_insert_point_to_contour():
+    contour = np.array(
+        [
+            [1, 1],
+            [-1, 1],
+            [-1, -1],
+            [1, -1],
+            [1, 1],
+        ]
+    )
+
+    excepted_contour = np.array(
+        [
+            [1, 1],
+            [-1, 1],
+            [-1, 0],
+            [-1, -1],
+            [1, -1],
+            [1, 0],
+            [1, 1],
+        ]
+    )
+
+    res = insert_point_to_contour(contour)
+
+    assert len(res) > len(contour), "新しい点が挿入されていません。"
+    assert np.allclose(res, excepted_contour), "挿入された点が正しくありません。"
