@@ -1,6 +1,5 @@
-
-# points : [(x1, y1), (x2, y2), ..., (xn, yn), (x1, y1)]
-def is_counter_clockwise( points ):
+# points : [[x1, y1], [x2, y2], ..., [xn, yn], [x1, y1]]
+def is_counter_clockwise(points):
     count = 0
     for i in range(len(points) - 2):
         x1, y1 = points[i]
@@ -20,5 +19,3 @@ def is_counter_clockwise( points ):
     # 外積が負の数が多い場合は時計回り
     elif count < 0:
         return False
-
-
