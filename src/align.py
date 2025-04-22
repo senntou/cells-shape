@@ -1,3 +1,4 @@
+from matplotlib.pyplot import xcorr
 import numpy as np
 from matplotlib.path import Path
 
@@ -31,12 +32,26 @@ def align_contour(contour):
         new_contour_adjusted = np.flipud(new_contour_adjusted)
 
     # 反時計回りに並べ替え
-    if is_counter_clockwise(new_contour):
+    if not is_counter_clockwise(new_contour):
         new_contour = new_contour[::-1]
         new_contour_adjusted = new_contour_adjusted[::-1]
 
+    # 始点を変更
+    new_contour = change_start_point(new_contour[:-1])
+    new_contour_adjusted = change_start_point(new_contour_adjusted[:-1])
+
     new_contour = np.array(new_contour)
     new_contour_adjusted = np.array(new_contour_adjusted)
+
+    assert not np.allclose(
+        new_contour[0], new_contour[-1]
+    ), "調整された輪郭が閉じています。"
+    assert not np.allclose(
+        new_contour_adjusted[0], new_contour_adjusted[-1]
+    ), "調整された輪郭が閉じています。"
+
+    new_contour = np.vstack((new_contour, new_contour[0]))
+    new_contour_adjusted = np.vstack((new_contour_adjusted, new_contour_adjusted[0]))
 
     return new_contour, new_contour_adjusted
 
@@ -167,3 +182,21 @@ def is_reverse(contour) -> bool:
     # 点の数が多いほうが上側
     # よって、上側の点の数が少ない場合は反転
     return upper_count < lower_count
+
+
+# contour = [[x1, y1], [x2, y2], ..., [xn, yn]]
+def change_start_point(contour):
+    assert not np.allclose(contour[0], contour[-1]), "頂点が閉じていてはいけません。"
+
+    # y = 0 のを点のうち、x座標が最大の点を探す
+    idx = -1
+    max_x = -np.inf
+    for i in range(len(contour)):
+        if np.isclose(contour[i][1], 0) and contour[i][0] > max_x:
+            max_x = contour[i][0]
+            idx = i
+
+    # 新しい始点を設定
+    new_contour = np.roll(contour, -idx, axis=0)
+
+    return new_contour

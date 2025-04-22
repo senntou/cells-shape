@@ -9,6 +9,7 @@ from align import (
     align_contour,
     calculate_polygon_centroid,
     calculate_principal_axes,
+    change_start_point,
     get_inside_points,
     insert_point_to_contour,
 )
@@ -286,3 +287,31 @@ def test_insert_point_to_contour():
 
     assert len(res) > len(contour), "新しい点が挿入されていません。"
     assert np.allclose(res, excepted_contour), "挿入された点が正しくありません。"
+
+
+def test_change_start_point():
+    contour = np.array(
+        [
+            [1, 1],
+            [-1, 1],
+            [-1, 0],
+            [-1, -1],
+            [1, -1],
+            [1, 0],
+        ]
+    )
+
+    excepted_contour = np.array(
+        [
+            [1, 0],
+            [1, 1],
+            [-1, 1],
+            [-1, 0],
+            [-1, -1],
+            [1, -1],
+        ]
+    )
+
+    res = change_start_point(contour)
+
+    assert np.allclose(res, excepted_contour), "開始点が正しく変更されていません。"

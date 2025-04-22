@@ -55,6 +55,6 @@ def main():
 
 if __name__ == "__main__":
     main()
-    res = cProfile.run("main()", "profile.prof")
-    p = pstats.Stats("profile.prof")
-    p.strip_dirs().sort_stats("cumtime").print_stats(50)
+    # res = cProfile.run("main()", "profile.prof")
+    # p = pstats.Stats("profile.prof")
+    # p.strip_dirs().sort_stats("cumtime").print_stats(50)
