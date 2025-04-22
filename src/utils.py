@@ -3,12 +3,27 @@ import numpy as np
 import os
 import bisect
 
+from data.const import OUTPUT_CONTOUR_PATH, OUTPUT_OTHER_PATH
+
 if not os.path.exists("output"):
     os.makedirs("output")
+if not os.path.exists(OUTPUT_CONTOUR_PATH):
+    os.makedirs(OUTPUT_CONTOUR_PATH)
+if not os.path.exists(OUTPUT_OTHER_PATH):
+    os.makedirs(OUTPUT_OTHER_PATH)
 
 
-# points = [[x1, y1], [x2, y2], ..., [xn, yn], [x1, y1]]
-def create_svg(points: np.ndarray, id: str, show_number: bool = False) -> None:
+# points = [[x1, y1], [x2, y2], ..., [xn, yn]]
+def create_svg(
+    points: np.ndarray,
+    id: str,
+    path: str = OUTPUT_CONTOUR_PATH,
+    show_number: bool = False,
+) -> None:
+    assert not np.allclose(points[0], points[-1]), "最初の点と最後の点が同じです"
+
+    points = np.append(points, [points[0]], axis=0)  # 最初の点を最後に追加して閉じる
+
     x, y = zip(*points, strict=True)  # zip(*points)でx, yを分離
 
     # グラフの作成
@@ -27,7 +42,7 @@ def create_svg(points: np.ndarray, id: str, show_number: bool = False) -> None:
     plt.axis("equal")  # 正方形スケールで表示
 
     # SVG形式で保存（PDFにしたい場合は 'output.pdf' に変更）
-    plt.savefig("output/output_" + id + ".svg", format="svg")
+    plt.savefig(f"{path}/output_" + id + ".svg", format="svg")
     plt.close()
 
 
@@ -92,3 +107,13 @@ def is_out_of_image(points: np.ndarray, image_size: tuple[int, int]) -> bool:
         if not (x_min <= point[0] <= x_max and y_min <= point[1] <= y_max):
             return True  # 画像の範囲外にある点が見つかった
     return False  # すべての点が画像の範囲内にある
+
+
+def plot_scatter(x: list[int], y: list[int], title: str = "") -> None:
+    plt.scatter(x, y, s=4)
+    plt.title(title)
+    plt.xlabel("X")
+    plt.ylabel("Y")
+    plt.grid(True)
+    plt.axis("equal")  # 正方形スケールで表示
+    plt.savefig(f"{OUTPUT_OTHER_PATH}/" + title + ".svg", format="svg")

@@ -2,6 +2,10 @@ FILE_IDS = [i for i in range(4, 14)]
 JSON_PATH = "/Dataset/Kurume_Dataset/Celltype_Dataset_v2/2024/2024_10_30/JSON/"
 IMAGE_PATH = "/Dataset/Kurume_Dataset/Celltype_Dataset_v2/Image/"
 
+OUTPUT_CONTOUR_PATH = "output/contours"
+OUTPUT_TEST_PATH = "output/test"
+OUTPUT_OTHER_PATH = "output/other"
+
 
 def get_file_names() -> list[str]:
     file_names = []

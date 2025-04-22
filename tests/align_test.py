@@ -1,6 +1,3 @@
-from sys import exc_info
-from types import new_class
-from matplotlib.cbook import contiguous_regions
 import numpy as np
 import os
 import matplotlib.pyplot as plt
@@ -13,11 +10,13 @@ from align import (
     get_inside_points,
     insert_point_to_contour,
 )
+from data.const import OUTPUT_TEST_PATH
 from data.dataio import get_json_data_from_number
-from utils import alter_points
 
-if not os.path.exists("output_test"):
-    os.makedirs("output_test")
+if not os.path.exists("output"):
+    os.makedirs("output")
+if not os.path.exists(OUTPUT_TEST_PATH):
+    os.makedirs(OUTPUT_TEST_PATH)
 
 
 def test_align_contour():
@@ -55,7 +54,7 @@ def test_align_contour():
         plt.ylabel("Y")
         plt.grid(True)
         plt.axis("equal")  # 正方形スケールで表示
-        plt.savefig(f"output_test/output_{id}.png", format="png")
+        plt.savefig(f"{OUTPUT_TEST_PATH}/output_{id}.png", format="png")
         plt.close()
 
 
@@ -159,7 +158,7 @@ def test_calculate_principal_axes():
         plt.ylabel("Y")
         plt.grid(True)
         plt.axis("equal")  # 正方形スケールで表示
-        plt.savefig(f"output_test/output_principal_axes_{id}.png", format="png")
+        plt.savefig(f"{OUTPUT_TEST_PATH}/output_principal_axes_{id}.png", format="png")
         plt.close()
 
 
@@ -176,12 +175,12 @@ def test_get_inside_points_square():
     inside_points = get_inside_points(contour, resolution=0.1)
 
     assert len(inside_points) > 0, "内側の点が見つかりません。"
-    assert np.all(inside_points[:, 0] >= 0) and np.all(inside_points[:, 0] <= 1), (
-        "X座標が範囲外です。"
-    )
-    assert np.all(inside_points[:, 1] >= 0) and np.all(inside_points[:, 1] <= 1), (
-        "Y座標が範囲外です。"
-    )
+    assert np.all(inside_points[:, 0] >= 0) and np.all(
+        inside_points[:, 0] <= 1
+    ), "X座標が範囲外です。"
+    assert np.all(inside_points[:, 1] >= 0) and np.all(
+        inside_points[:, 1] <= 1
+    ), "Y座標が範囲外です。"
 
     contour = np.append(contour, [contour[0]], axis=0)  # 閉じるために最初の点を追加
 
@@ -208,7 +207,7 @@ def test_get_inside_points_square():
     plt.ylabel("Y")
     plt.grid(True)
     plt.axis("equal")  # 正方形スケールで表示
-    plt.savefig(f"output_test/output_inside_points_square.png", format="png")
+    plt.savefig(f"{OUTPUT_TEST_PATH}/output_inside_points_square.png", format="png")
     plt.close()
 
 
@@ -224,9 +223,9 @@ def test_get_inside_points_triangle():
     inside_points = get_inside_points(contour, resolution=0.1)
 
     assert len(inside_points) > 0, "内側の点が見つかりません。"
-    assert np.all(inside_points[:, 0] >= 0) and np.all(inside_points[:, 0] <= 1), (
-        "X座標が範囲外です。"
-    )
+    assert np.all(inside_points[:, 0] >= 0) and np.all(
+        inside_points[:, 0] <= 1
+    ), "X座標が範囲外です。"
     assert np.all(inside_points[:, 1] >= 0) and np.all(
         inside_points[:, 1] <= np.sqrt(3) / 2
     ), "Y座標が範囲外です。"
@@ -256,7 +255,7 @@ def test_get_inside_points_triangle():
     plt.ylabel("Y")
     plt.grid(True)
     plt.axis("equal")  # 正方形スケールで表示
-    plt.savefig(f"output_test/output_inside_points_triangle.png", format="png")
+    plt.savefig(f"{OUTPUT_TEST_PATH}/output_inside_points_triangle.png", format="png")
     plt.close()
 
 
