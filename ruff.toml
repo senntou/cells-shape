@@ -1,0 +1,27 @@
+# ruff.toml
+
+# Pythonのバージョン（例：3.10）
+target-version = "py312"
+
+# リントルール設定
+[lint]
+# 取り入れるルールセット（ベース）
+select = [
+  "E",    # pycodestyle (PEP8)
+  "B",    # bugbear（ありがちなバグ）
+  "UP",   # pyupgrade（古い構文の警告）
+  "N",    # pep8-naming（クラス・関数名の規約）
+  "ANN",  # type annotation（型ヒントのチェック）
+  "PL",   # pylint風ルール（やや厳しめ）
+]
+
+# 無視したいルール
+ignore = [
+  "ANN101", # self に型注釈なし OK
+  "ANN102", # cls に型注釈なし OK
+]
+
+# ファイルごとの無視ルール（テストだけ型注釈ゆるめとか）
+[lint.per-file-ignores]
+"tests/**.py" = ["ANN"]
+
