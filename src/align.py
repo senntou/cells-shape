@@ -26,7 +26,7 @@ def align_contour(contour: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
     new_contour = insert_point_to_contour(new_contour)
 
     # 点の追加
-    new_contour_adjusted = alter_points(new_contour, NUM_POINTS=1000)
+    new_contour_adjusted = alter_points(new_contour, num_points=1000)
 
     # 裏表（上下）の判定・反転
     if is_reverse(new_contour_adjusted):
@@ -52,14 +52,11 @@ def align_contour(contour: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
         "調整された輪郭が閉じています。"
     )
 
-    new_contour = np.vstack((new_contour, new_contour[0]))
-    new_contour_adjusted = np.vstack((new_contour_adjusted, new_contour_adjusted[0]))
-
     return new_contour, new_contour_adjusted
 
 
 # vertices = [[x1, y1], [x2, y2], ..., [xn, yn], [x1, y1]]
-def calculate_polygon_centroid(vertices):
+def calculate_polygon_centroid(vertices: np.ndarray) -> np.ndarray:
     assert np.allclose(vertices[0], vertices[-1]), (
         "多角形の頂点は閉じている必要があります。"
     )
@@ -68,7 +65,8 @@ def calculate_polygon_centroid(vertices):
     num_vertices = vertices.shape[0]
 
     # 頂点数が3未満の場合はエラーを返す(閉じているため、4以上)
-    assert num_vertices >= 4, "多角形は3つ以上の頂点を持つ必要があります。"
+    vertex_num = 3
+    assert num_vertices >= vertex_num + 1, "多角形は3つ以上の頂点を持つ必要があります。"
 
     x = vertices[:, 0]
     y = vertices[:, 1]
@@ -87,7 +85,7 @@ def calculate_polygon_centroid(vertices):
 
 
 # contour = [[x1, y1], [x2, y2], ..., [xn, yn]]
-def get_inside_points(contour, resolution=1.0):
+def get_inside_points(contour: np.ndarray, resolution: float = 1.0) -> np.ndarray:
     assert not np.allclose(contour[0], contour[-1]), "頂点が閉じています。"
 
     # 輪郭を囲む矩形を作成
@@ -143,7 +141,7 @@ def calculate_principal_axes(contour):
 
 # 輪郭がx軸と交わる場所に点を追加する
 # contour = [[x1, y1], [x2, y2], ..., [xn, yn], [x1, y1]]
-def insert_point_to_contour(contour):
+def insert_point_to_contour(contour: np.ndarray) -> np.ndarray:
     assert np.allclose(contour[0], contour[-1]), (
         "多角形の頂点は閉じている必要があります。"
     )
@@ -161,7 +159,7 @@ def insert_point_to_contour(contour):
 
         new_contour.append(p2)
 
-    return new_contour
+    return np.array(new_contour)
 
 
 # 形の上下を判定する

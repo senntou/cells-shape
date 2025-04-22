@@ -7,3 +7,6 @@ clean :
 
 test :
 	pytest tests/*.py -s
+
+cache-clear : 
+	rm -rf cache

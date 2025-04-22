@@ -8,8 +8,8 @@ if not os.path.exists("output"):
 
 
 # points = [[x1, y1], [x2, y2], ..., [xn, yn], [x1, y1]]
-def create_svg(points, id, show_number=False):
-    x, y = zip(*points)
+def create_svg(points: np.ndarray, id: str, show_number: bool = False) -> None:
+    x, y = zip(*points, strict=True)  # zip(*points)でx, yを分離
 
     # グラフの作成
     plt.figure(figsize=(6, 6))
@@ -33,7 +33,7 @@ def create_svg(points, id, show_number=False):
 
 # 点の取り方を変える
 # points = [[x1, y1], [x2, y2], ..., [xn, yn], [x1, y1]]
-def alter_points(points, NUM_POINTS=1000):
+def alter_points(points: np.ndarray, num_points: int = 1000) -> np.ndarray:
     # 1. 輪郭の長さを計算する
     # 2. 同時に各点までの始点からの距離を計算する
     # 3. 輪郭の長さをNUM_POINTSで割り，点を等間隔に配置する
@@ -49,13 +49,13 @@ def alter_points(points, NUM_POINTS=1000):
 
     # 各点の新しい位置を計算
     new_points = []
-    for i in range(NUM_POINTS):
+    for i in range(num_points):
         # 等間隔に配置するための距離
-        dist = i * (total_length / NUM_POINTS)
+        dist = i * (total_length / num_points)
 
         # distance >= target_distance となる最小の点
         index = bisect.bisect_right(distances, dist) - 1
-        assert 0 <= index and index < len(points) - 1, (
+        assert 0 <= index < len(points) - 1, (
             "Index out of range" + "  i : " + str(i) + "  dist : " + str(dist)
         )
 
@@ -77,7 +77,7 @@ def alter_points(points, NUM_POINTS=1000):
 
 # 画像から見切れているかどうかを判定する
 # points = [[x1, y1], [x2, y2], ..., [xn, yn], [x1, y1]]
-def is_out_of_image(points, image_size):
+def is_out_of_image(points: np.ndarray, image_size: tuple[int, int]) -> bool:
     # 画像のサイズを取得
     height, width = image_size
     margin = 0.001

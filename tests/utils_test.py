@@ -1,13 +1,13 @@
 import numpy as np
-import bisect
 
 from utils import alter_points
 
 
 def test_alter_points():
     points = [[0, 0], [1, 1], [2, 2], [3, 3], [4, 4], [5, 5]]
+    points = np.array(points)
 
-    res = alter_points(points, NUM_POINTS=1000)
+    res = alter_points(points, num_points=1000)
     answer = np.linspace(0, 5, num=1001)
     answer = np.column_stack((answer, answer))
     answer = answer[:-1]
