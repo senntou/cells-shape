@@ -2,15 +2,17 @@ from matplotlib.pyplot import xcorr
 import numpy as np
 from matplotlib.path import Path
 
+from mycache.sqlite_cache import cache_to_sqlite
 from calc import is_counter_clockwise
 from utils import alter_points
 
 
 # contour = [[x1, y1], [x2, y2], ..., [xn, yn], [x1, y1]]
-def align_contour(contour):
-    assert np.allclose(
-        contour[0], contour[-1]
-    ), "多角形の頂点は閉じている必要があります。"
+@cache_to_sqlite
+def align_contour(contour: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
+    assert np.allclose(contour[0], contour[-1]), (
+        "多角形の頂点は閉じている必要があります"
+    )
 
     # 並進
     centroid = calculate_polygon_centroid(contour)
@@ -43,12 +45,12 @@ def align_contour(contour):
     new_contour = np.array(new_contour)
     new_contour_adjusted = np.array(new_contour_adjusted)
 
-    assert not np.allclose(
-        new_contour[0], new_contour[-1]
-    ), "調整された輪郭が閉じています。"
-    assert not np.allclose(
-        new_contour_adjusted[0], new_contour_adjusted[-1]
-    ), "調整された輪郭が閉じています。"
+    assert not np.allclose(new_contour[0], new_contour[-1]), (
+        "調整された輪郭が閉じています。"
+    )
+    assert not np.allclose(new_contour_adjusted[0], new_contour_adjusted[-1]), (
+        "調整された輪郭が閉じています。"
+    )
 
     new_contour = np.vstack((new_contour, new_contour[0]))
     new_contour_adjusted = np.vstack((new_contour_adjusted, new_contour_adjusted[0]))
@@ -58,9 +60,9 @@ def align_contour(contour):
 
 # vertices = [[x1, y1], [x2, y2], ..., [xn, yn], [x1, y1]]
 def calculate_polygon_centroid(vertices):
-    assert np.allclose(
-        vertices[0], vertices[-1]
-    ), "多角形の頂点は閉じている必要があります。"
+    assert np.allclose(vertices[0], vertices[-1]), (
+        "多角形の頂点は閉じている必要があります。"
+    )
 
     vertices = np.array(vertices)
     num_vertices = vertices.shape[0]
@@ -129,12 +131,12 @@ def calculate_principal_axes(contour):
     principal_axis_1 = eigenvectors[:, 0]
     principal_axis_2 = eigenvectors[:, 1]
 
-    assert np.allclose(
-        np.linalg.norm(principal_axis_1), 1
-    ), f"主成分の長軸の長さが1ではありません。{np.linalg.norm(principal_axis_1)}"
-    assert np.allclose(
-        np.linalg.norm(principal_axis_2), 1
-    ), f"主成分の短軸の長さが1ではありません。{np.linalg.norm(principal_axis_2)}"
+    assert np.allclose(np.linalg.norm(principal_axis_1), 1), (
+        f"主成分の長軸の長さが1ではありません。{np.linalg.norm(principal_axis_1)}"
+    )
+    assert np.allclose(np.linalg.norm(principal_axis_2), 1), (
+        f"主成分の短軸の長さが1ではありません。{np.linalg.norm(principal_axis_2)}"
+    )
 
     return principal_axis_1, principal_axis_2
 
@@ -142,9 +144,9 @@ def calculate_principal_axes(contour):
 # 輪郭がx軸と交わる場所に点を追加する
 # contour = [[x1, y1], [x2, y2], ..., [xn, yn], [x1, y1]]
 def insert_point_to_contour(contour):
-    assert np.allclose(
-        contour[0], contour[-1]
-    ), "多角形の頂点は閉じている必要があります。"
+    assert np.allclose(contour[0], contour[-1]), (
+        "多角形の頂点は閉じている必要があります。"
+    )
 
     new_contour = [contour[0]]  # 最初の点を追加
 
@@ -167,9 +169,9 @@ def insert_point_to_contour(contour):
 # 既に等間隔に分割されていることを前提とする
 # contour = [[x1, y1], [x2, y2], ..., [xn, yn], [x1, y1]]
 def is_reverse(contour) -> bool:
-    assert np.allclose(
-        contour[0], contour[-1]
-    ), "多角形の頂点は閉じている必要があります。"
+    assert np.allclose(contour[0], contour[-1]), (
+        "多角形の頂点は閉じている必要があります。"
+    )
     assert np.allclose(
         np.linalg.norm(contour[0] - contour[1]),
         np.linalg.norm(contour[-1] - contour[-2]),
