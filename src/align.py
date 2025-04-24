@@ -9,7 +9,9 @@ from utils import alter_points
 
 # contour = [[x1, y1], [x2, y2], ..., [xn, yn], [x1, y1]]
 @cache_to_sqlite
-def align_contour(contour: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
+def align_contour(
+    contour: np.ndarray, num_points: int = 1000
+) -> tuple[np.ndarray, np.ndarray]:
     assert np.allclose(contour[0], contour[-1]), (
         "多角形の頂点は閉じている必要があります"
     )
@@ -26,7 +28,7 @@ def align_contour(contour: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
     new_contour = insert_point_to_contour(new_contour)
 
     # 点の追加
-    new_contour_adjusted = alter_points(new_contour, num_points=1000)
+    new_contour_adjusted = alter_points(new_contour, num_points=num_points)
 
     # 裏表（上下）の判定・反転
     if is_reverse(new_contour_adjusted):
