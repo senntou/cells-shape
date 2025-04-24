@@ -58,8 +58,6 @@ def main() -> None:
 
     # 正規化
     x_normalized = x - np.mean(x, axis=1).reshape(-1, 1)
-    # TODO: スケールを揃える必要があるかは、要検討
-    x_normalized = x_normalized / np.std(x_normalized, axis=1).reshape(-1, 1)
 
     # 分散共分散行列を計算
     covarience_matrix = np.cov(x_normalized)
@@ -137,7 +135,6 @@ def main() -> None:
     plt.savefig(OUTPUT_OTHER_PATH + "/pca_scatter_subplots.svg", format="svg")
     plt.close()
 
-    #
     for i in range(10):
         fig, axes = plt.subplots(1, 3, figsize=(12, 4))
         for j in range(3):
