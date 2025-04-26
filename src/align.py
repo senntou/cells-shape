@@ -29,14 +29,14 @@ def align_contour(
     assert not np.allclose(new_contour[0], new_contour[-1]), "closed"
     assert not np.allclose(new_contour_adjusted[0], new_contour_adjusted[-1]), "closed"
 
-    new_contour_adjusted = np.append(
-        new_contour_adjusted, [new_contour_adjusted[0]], axis=0
-    )
-
     # 裏表（上下）の判定・反転
     if is_reverse(new_contour_adjusted):
         new_contour = np.flipud(new_contour)
         new_contour_adjusted = np.flipud(new_contour_adjusted)
+
+    new_contour_adjusted = np.append(
+        new_contour_adjusted, [new_contour_adjusted[0]], axis=0
+    )
 
     # 反時計回りに並べ替え
     if not is_counter_clockwise(new_contour):
@@ -168,10 +168,8 @@ def insert_point_to_contour(contour: np.ndarray) -> np.ndarray:
 # 上側と下側の輪郭線の長さを比較する
 # 既に等間隔に分割されていることを前提とする
 # contour = [[x1, y1], [x2, y2], ..., [xn, yn], [x1, y1]]
-def is_reverse(contour) -> bool:
-    assert np.allclose(contour[0], contour[-1]), (
-        "多角形の頂点は閉じている必要があります。"
-    )
+def is_reverse(contour: np.ndarray) -> bool:
+    assert not np.allclose(contour[0], contour[-1]), "輪郭が閉じています。"
     # assert np.allclose(
     #     np.linalg.norm(contour[0] - contour[1]),
     #     np.linalg.norm(contour[-1] - contour[-2]),
@@ -183,7 +181,7 @@ def is_reverse(contour) -> bool:
 
     # 点の数が多いほうが上側
     # よって、上側の点の数が少ない場合は反転
-    return upper_count < lower_count
+    return bool(upper_count < lower_count)
 
 
 # contour = [[x1, y1], [x2, y2], ..., [xn, yn]]
