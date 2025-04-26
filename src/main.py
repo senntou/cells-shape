@@ -4,6 +4,7 @@ import numpy as np
 
 from data.const import OUTPUT_OTHER_PATH
 from data.dataio import get_contours_from_all_files
+from mycache.array_db import save_array_to_db
 from mycache.sqlite_cache import cache_to_sqlite
 from mytypes.data_type import ContourData
 from utils import (
@@ -110,6 +111,8 @@ def main() -> None:
         eigenvectors,
         weight,
     )
+
+    save_array_to_db("eigenvectors", eigenvectors)
 
 
 if __name__ == "__main__":

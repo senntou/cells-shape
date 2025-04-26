@@ -1,4 +1,5 @@
-import os
+import numpy as np
+from mycache.array_db import load_array_from_db, save_array_to_db
 from mycache.sqlite_cache import cache_to_sqlite
 
 
@@ -42,3 +43,24 @@ def test_float_cache():
     result = return_value(a)
     assert result == a, f"Failed for {a}"
 
+
+def test_save_array_to_db():
+    # NumPy配列を作成
+    array = np.array(
+        [
+            [1.00001, 2.00001, 3.00001, 4.00001, 5.00001],
+            [3.00001, 4.00001, 5.00001, 6.00001, 7.00001],
+        ]
+    )
+
+    # 配列をデータベースに保存
+    save_array_to_db("test_array", array)
+
+    # データベースから配列を読み込む
+    loaded_array = load_array_from_db("test_array")
+
+    # 読み込んだ配列が元の配列と等しいことを確認
+    assert np.shape(array) == np.shape(loaded_array), "Shape mismatch"
+    assert np.array_equal(array, loaded_array), (
+        "Loaded array does not match the original array"
+    )
