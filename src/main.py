@@ -112,6 +112,7 @@ def main() -> None:
         weight,
     )
 
+    save_array_to_db("mean", x_mean)
     save_array_to_db("eigenvectors", eigenvectors)
 
 
