@@ -1,13 +1,18 @@
 from calc import is_counter_clockwise
 from align import align_contour
 import numpy as np
-import matplotlib.pyplot as plt
 
 from data.const import OUTPUT_OTHER_PATH
 from data.dataio import get_contours_from_all_files
 from mycache.sqlite_cache import cache_to_sqlite
 from mytypes.data_type import ContourData
-from utils import create_svg, eigenvec_subplot_2dim, is_out_of_image, plot_scatter
+from utils import (
+    create_svg,
+    eigenvec_subplot_2dim,
+    eigenvec_subplot_each,
+    is_out_of_image,
+    plot_scatter,
+)
 
 
 # points = [[x1, y1], [x2, y2], ..., [xn, yn]]
@@ -92,18 +97,7 @@ def main() -> None:
 
     eigenvectors_top2 = eigenvectors[:, :2]
 
-    # 第1, 第2主成分を調整しつつ、プロット
     weight = 30
-    for i in range(-1, 2):
-        for j in range(-1, 2):
-            create_svg(
-                (
-                    x_mean + eigenvectors_top2 @ np.array([i * weight, j * weight])
-                ).reshape(-1, 2),
-                f"principal_components_{i * weight}_{j * weight}",
-                path=OUTPUT_OTHER_PATH,
-                show_number=False,
-            )
 
     eigenvec_subplot_2dim(
         x_mean,
@@ -111,22 +105,11 @@ def main() -> None:
         weight,
     )
 
-    for i in range(10):
-        fig, axes = plt.subplots(1, 3, figsize=(12, 4))
-        for j in range(3):
-            # 各サブプロットにランダムなデータをプロット
-            axes[j].plot(
-                (x_mean + eigenvectors[:, i] * (j - 1) * weight).reshape(-1, 2)[:, 0],
-                (x_mean + eigenvectors[:, i] * (j - 1) * weight).reshape(-1, 2)[:, 1],
-                "o",
-                markersize=2,
-            )
-            axes[j].set_title(f"Eigenvector {i}: {(j - 1) * weight}")
-            axes[j].axis("equal")
-        # レイアウトを調整
-        plt.tight_layout()
-        plt.savefig(OUTPUT_OTHER_PATH + f"/eigenvector_{i}_subplots.svg", format="svg")
-        plt.close()
+    eigenvec_subplot_each(
+        x_mean,
+        eigenvectors,
+        weight,
+    )
 
 
 if __name__ == "__main__":

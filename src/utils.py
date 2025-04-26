@@ -119,13 +119,31 @@ def plot_scatter(x: list[int], y: list[int], title: str = "") -> None:
     plt.savefig(f"{OUTPUT_OTHER_PATH}/" + title + ".svg", format="svg")
 
 
-def get_x_y_for_eigenvector(
-    mean: np.ndarray, eigenvec: np.ndarray, weight: float
-) -> tuple[np.ndarray, np.ndarray]:
-    return (
-        (mean + eigenvec * weight).reshape(-1, 2)[:, 0],
-        (mean + eigenvec * weight).reshape(-1, 2)[:, 1],
-    )
+def eigenvec_subplot_each(
+    x_mean: np.ndarray,
+    eigenvectors: np.ndarray,
+    weight: float,
+    length: int = 13,
+) -> None:
+    for i in range(10):
+        _, axes = plt.subplots(1, 3, figsize=(12, 4))
+        for j in range(3):
+            ax = axes[j]
+            contour = (x_mean + eigenvectors[:, i] * (j - 1) * weight).reshape(-1, 2)
+            ax.plot(
+                contour[:, 0],
+                contour[:, 1],
+                "o",
+                markersize=2,
+            )
+            ax.set_title(f"Eigenvector {i}: {(j - 1) * weight}")
+            ax.set_xlim(-length, length)
+            ax.set_ylim(-length, length)
+
+        # レイアウトを調整
+        plt.tight_layout()
+        plt.savefig(OUTPUT_OTHER_PATH + f"/eigenvector_{i}_subplots.svg", format="svg")
+        plt.close()
 
 
 def eigenvec_subplot_2dim(
