@@ -7,7 +7,7 @@ from data.const import OUTPUT_OTHER_PATH
 from data.dataio import get_contours_from_all_files
 from mycache.sqlite_cache import cache_to_sqlite
 from mytypes.data_type import ContourData
-from utils import create_svg, is_out_of_image, plot_scatter
+from utils import create_svg, eigenvec_subplot_2dim, is_out_of_image, plot_scatter
 
 
 # points = [[x1, y1], [x2, y2], ..., [xn, yn]]
@@ -34,7 +34,7 @@ def get_contours_aligned(contours_data: dict[str, ContourData]) -> np.ndarray:
 
         contours_plane.append(points)  # 全体描画のため
 
-        points, points_adjusted = align_contour(points, num_points=100)
+        points, points_adjusted = align_contour(points, num_points=1000)
 
         # create_svg(points, key, show_number=True)
 
@@ -105,34 +105,11 @@ def main() -> None:
                 show_number=False,
             )
 
-    # 3x3のサブプロットを作成
-    fig, axes = plt.subplots(3, 3, figsize=(12, 12))
-
-    # グラフを描画
-    for i in range(3):
-        for j in range(3):
-            # 各サブプロットにランダムなデータをプロット
-            axes[2 - j, i].plot(
-                (
-                    x_mean
-                    + eigenvectors_top2 @ np.array([(i - 1) * weight, (j - 1) * weight])
-                ).reshape(-1, 2)[:, 0],
-                (
-                    x_mean
-                    + eigenvectors_top2 @ np.array([(i - 1) * weight, (j - 1) * weight])
-                ).reshape(-1, 2)[:, 1],
-                "o",
-                markersize=2,
-            )
-            axes[2 - j, i].set_title(
-                f"PC1: {(i - 1) * weight}, PC2: {(j - 1) * weight}"
-            )
-            axes[2 - j, i].axis("equal")
-
-    # レイアウトを調整
-    plt.tight_layout()
-    plt.savefig(OUTPUT_OTHER_PATH + "/pca_scatter_subplots.svg", format="svg")
-    plt.close()
+    eigenvec_subplot_2dim(
+        x_mean,
+        eigenvectors_top2,
+        weight,
+    )
 
     for i in range(10):
         fig, axes = plt.subplots(1, 3, figsize=(12, 4))

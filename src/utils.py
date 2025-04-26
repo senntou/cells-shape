@@ -117,3 +117,49 @@ def plot_scatter(x: list[int], y: list[int], title: str = "") -> None:
     plt.grid(True)
     plt.axis("equal")  # 正方形スケールで表示
     plt.savefig(f"{OUTPUT_OTHER_PATH}/" + title + ".svg", format="svg")
+
+
+def get_x_y_for_eigenvector(
+    mean: np.ndarray, eigenvec: np.ndarray, weight: float
+) -> tuple[np.ndarray, np.ndarray]:
+    return (
+        (mean + eigenvec * weight).reshape(-1, 2)[:, 0],
+        (mean + eigenvec * weight).reshape(-1, 2)[:, 1],
+    )
+
+
+def eigenvec_subplot_2dim(
+    mean: np.ndarray,
+    eigenvectors_top2: np.ndarray,
+    weight: float,
+    length: int = 13,
+) -> None:
+    # 3x3のサブプロットを作成
+    _, axes = plt.subplots(3, 3, figsize=(12, 12))
+
+    # グラフを描画
+    for i in range(3):
+        for j in range(3):
+            ax = axes[2 - j, i]
+
+            contour = (
+                mean
+                + eigenvectors_top2 @ np.array([(i - 1) * weight, (j - 1) * weight])
+            ).reshape(-1, 2)
+
+            ax.plot(
+                contour[:, 0],
+                contour[:, 1],
+                "o",
+                markersize=2,
+            )
+
+            ax.set_title(f"PC1: {(i - 1) * weight}, PC2: {(j - 1) * weight}")
+
+            ax.set_xlim(-length, length)
+            ax.set_ylim(-length, length)
+
+    # レイアウトを調整
+    plt.tight_layout()
+    plt.savefig(OUTPUT_OTHER_PATH + "/pca_scatter_subplots.svg", format="svg")
+    plt.close()
