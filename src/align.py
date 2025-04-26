@@ -23,6 +23,9 @@ def align_contour(
     # 内挿
     new_contour = insert_point_to_contour(new_contour)
 
+    # 始点を変更
+    new_contour = change_start_point(new_contour)
+
     # 点の追加
     new_contour_adjusted = alter_points(new_contour, num_points=num_points)
 
@@ -38,10 +41,6 @@ def align_contour(
     if not is_counter_clockwise(new_contour):
         new_contour = new_contour[::-1]
         new_contour_adjusted = new_contour_adjusted[::-1]
-
-    # 始点を変更
-    new_contour = change_start_point(new_contour)
-    new_contour_adjusted = change_start_point(new_contour_adjusted)
 
     assert new_contour_adjusted.shape[0] == num_points, "num_points"
 
