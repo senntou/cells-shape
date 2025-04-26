@@ -31,11 +31,15 @@ def test_align_contour():
         assert aligned_contour is not None, "整列された輪郭が計算されていません。"
         assert type(aligned_contour) is np.ndarray, "整列された輪郭の型が不正です。"
 
+        closed_contour = np.append(
+            contour, [contour[0]], axis=0
+        )  # 閉じるために最初の点を追加
+
         # contourとaligned_contourをグラフに描画
         plt.figure(figsize=(6, 6))
         plt.plot(
-            contour[:, 0],
-            contour[:, 1],
+            closed_contour[:, 0],
+            closed_contour[:, 1],
             marker="o",
             linestyle="-",
             color="blue",
@@ -125,10 +129,14 @@ def test_calculate_principal_axes():
 
         mean = np.mean(contour[:-1], axis=0)
 
+        closed_contour = np.append(
+            contour, [contour[0]], axis=0
+        )  # 閉じるために最初の点を追加
+
         plt.figure(figsize=(6, 6))
         plt.plot(
-            contour[:, 0],
-            contour[:, 1],
+            closed_contour[:, 0],
+            closed_contour[:, 1],
             marker="o",
             linestyle="-",
             color="blue",
@@ -265,7 +273,6 @@ def test_insert_point_to_contour():
             [-1, 1],
             [-1, -1],
             [1, -1],
-            [1, 1],
         ]
     )
 
@@ -277,13 +284,13 @@ def test_insert_point_to_contour():
             [-1, -1],
             [1, -1],
             [1, 0],
-            [1, 1],
         ]
     )
 
     res = insert_point_to_contour(contour)
 
     assert len(res) > len(contour), "新しい点が挿入されていません。"
+    assert np.allclose(res.shape, excepted_contour.shape), "形状が一致しません。"
     assert np.allclose(res, excepted_contour), "挿入された点が正しくありません。"
 
 

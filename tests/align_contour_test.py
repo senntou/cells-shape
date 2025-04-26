@@ -21,6 +21,10 @@ def test_align_contour():
 
     assert len(contour_after) == num_points, "Number of points mismatch"
 
+    contour_before = np.append(
+        contour_before, [contour_before[0]], axis=0
+    )  # 最初の点を追加
+
     # plot
 
     plt.figure()

@@ -20,10 +20,10 @@ def align_contour(
     v1, v2 = calculate_principal_axes(new_contour)
     new_contour = np.dot(new_contour, np.array([v1, v2]).T)
 
-    new_contour = np.append(new_contour, [new_contour[0]], axis=0)
-
     # 内挿
     new_contour = insert_point_to_contour(new_contour)
+
+    new_contour = np.append(new_contour, [new_contour[0]], axis=0)  # 最初の点を追加
 
     # 点の追加
     new_contour_adjusted = alter_points(new_contour, num_points=num_points)
@@ -138,12 +138,11 @@ def calculate_principal_axes(contour):
 
 
 # 輪郭がx軸と交わる場所に点を追加する
-# contour = [[x1, y1], [x2, y2], ..., [xn, yn], [x1, y1]]
+# contour = [[x1, y1], [x2, y2], ..., [xn, yn]]
 def insert_point_to_contour(contour: np.ndarray) -> np.ndarray:
-    assert np.allclose(contour[0], contour[-1]), (
-        "多角形の頂点は閉じている必要があります。"
-    )
+    assert not np.allclose(contour[0], contour[-1]), "輪郭が閉じています。"
 
+    contour = np.append(contour, [contour[0]], axis=0)  # 閉じる
     new_contour = [contour[0]]  # 最初の点を追加
 
     for i in range(len(contour) - 1):
@@ -157,7 +156,7 @@ def insert_point_to_contour(contour: np.ndarray) -> np.ndarray:
 
         new_contour.append(p2)
 
-    return np.array(new_contour)
+    return np.array(new_contour)[:-1]  # 最後の点を削除
 
 
 # 形の上下を判定する
