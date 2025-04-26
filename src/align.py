@@ -16,11 +16,11 @@ def align_contour(
     centroid = calculate_polygon_centroid(contour)
     new_contour = contour - centroid
 
-    new_contour = np.append(new_contour, [new_contour[0]], axis=0)
-
     # 回転
-    v1, v2 = calculate_principal_axes(new_contour[:-1])
+    v1, v2 = calculate_principal_axes(new_contour)
     new_contour = np.dot(new_contour, np.array([v1, v2]).T)
+
+    new_contour = np.append(new_contour, [new_contour[0]], axis=0)
 
     # 内挿
     new_contour = insert_point_to_contour(new_contour)
