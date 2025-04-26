@@ -7,17 +7,16 @@ from utils import alter_points
 
 
 # contour = [[x1, y1], [x2, y2], ..., [xn, yn], [x1, y1]]
-@cache_to_sqlite
 def align_contour(
     contour: np.ndarray, num_points: int = 1000
 ) -> tuple[np.ndarray, np.ndarray]:
     assert not np.allclose(contour[0], contour[-1]), "輪郭が閉じています。"
 
-    contour = np.append(contour, [contour[0]], axis=0)
-
     # 並進
     centroid = calculate_polygon_centroid(contour)
     new_contour = contour - centroid
+
+    new_contour = np.append(new_contour, [new_contour[0]], axis=0)
 
     # 回転
     v1, v2 = calculate_principal_axes(new_contour[:-1])
@@ -56,13 +55,11 @@ def align_contour(
     return new_contour, new_contour_adjusted
 
 
-# vertices = [[x1, y1], [x2, y2], ..., [xn, yn], [x1, y1]]
+# vertices = [[x1, y1], [x2, y2], ..., [xn, yn]]
 def calculate_polygon_centroid(vertices: np.ndarray) -> np.ndarray:
-    assert np.allclose(vertices[0], vertices[-1]), (
-        "多角形の頂点は閉じている必要があります。"
-    )
+    assert not np.allclose(vertices[0], vertices[-1]), "頂点が閉じています。"
 
-    vertices = np.array(vertices)
+    vertices = np.append(vertices, [vertices[0]], axis=0)
     num_vertices = vertices.shape[0]
 
     # 頂点数が3未満の場合はエラーを返す(閉じているため、4以上)

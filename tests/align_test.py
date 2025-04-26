@@ -66,7 +66,7 @@ def test_calculate_polygon_centroid_convex():
     e = (-1 / 2, -np.sqrt(3) / 2)
     f = (1 / 2, -np.sqrt(3) / 2)
 
-    vertices = np.array([a, b, c, d, e, f, a])
+    vertices = np.array([a, b, c, d, e, f])
 
     centroid = calculate_polygon_centroid(vertices)
 
@@ -88,7 +88,7 @@ def test_calculate_polygon_centroid_concave():
     k = (1 / 2, -np.sqrt(3) / 2)
     l = (np.sqrt(3) / 4, -1 / 4)
 
-    vertices = np.array([a, b, c, d, e, f, g, h, i, j, k, l, a])
+    vertices = np.array([a, b, c, d, e, f, g, h, i, j, k, l])
     vertices += np.array((1, 1))
 
     centroid = calculate_polygon_centroid(vertices)
