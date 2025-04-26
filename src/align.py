@@ -34,14 +34,16 @@ def align_contour(
         new_contour = np.flipud(new_contour)
         new_contour_adjusted = np.flipud(new_contour_adjusted)
 
-    new_contour_adjusted = np.append(
-        new_contour_adjusted, [new_contour_adjusted[0]], axis=0
-    )
-
     # 反時計回りに並べ替え
     if not is_counter_clockwise(new_contour):
         new_contour = new_contour[::-1]
         new_contour_adjusted = new_contour_adjusted[::-1]
+
+    assert new_contour_adjusted.shape[0] == num_points, "num_points"
+
+    new_contour_adjusted = np.append(
+        new_contour_adjusted, [new_contour_adjusted[0]], axis=0
+    )
 
     # 始点を変更
     new_contour = change_start_point(new_contour[:-1])

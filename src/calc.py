@@ -1,5 +1,8 @@
+import numpy as np
+
+
 # points : [[x1, y1], [x2, y2], ..., [xn, yn], [x1, y1]]
-def is_counter_clockwise(points):
+def is_counter_clockwise(points: np.ndarray) -> bool:
     count = 0
     num = len(points) - 1  # 最初の点を追加しているので、-1する
     for i in range(num):
@@ -19,5 +22,5 @@ def is_counter_clockwise(points):
     if count > 0:
         return True
     # 外積が負の数が多い場合は時計回り
-    elif count < 0:
+    else:
         return False
