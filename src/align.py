@@ -39,25 +39,11 @@ def align_contour(
         new_contour = new_contour[::-1]
         new_contour_adjusted = new_contour_adjusted[::-1]
 
-    assert new_contour_adjusted.shape[0] == num_points, "num_points"
-
-    new_contour_adjusted = np.append(
-        new_contour_adjusted, [new_contour_adjusted[0]], axis=0
-    )
-
     # 始点を変更
-    new_contour = change_start_point(new_contour[:-1])
-    new_contour_adjusted = change_start_point(new_contour_adjusted[:-1])
+    new_contour = change_start_point(new_contour)
+    new_contour_adjusted = change_start_point(new_contour_adjusted)
 
-    new_contour = np.array(new_contour)
-    new_contour_adjusted = np.array(new_contour_adjusted)
-
-    assert not np.allclose(new_contour[0], new_contour[-1]), (
-        "調整された輪郭が閉じています。"
-    )
-    assert not np.allclose(new_contour_adjusted[0], new_contour_adjusted[-1]), (
-        "調整された輪郭が閉じています。"
-    )
+    assert new_contour_adjusted.shape[0] == num_points, "num_points"
 
     return new_contour, new_contour_adjusted
 
@@ -187,7 +173,7 @@ def is_reverse(contour: np.ndarray) -> bool:
 
 
 # contour = [[x1, y1], [x2, y2], ..., [xn, yn]]
-def change_start_point(contour):
+def change_start_point(contour: np.ndarray) -> np.ndarray:
     assert not np.allclose(contour[0], contour[-1]), "頂点が閉じていてはいけません。"
 
     # y = 0 のを点のうち、x座標が最大の点を探す
