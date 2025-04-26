@@ -23,10 +23,15 @@ def align_contour(
     # 内挿
     new_contour = insert_point_to_contour(new_contour)
 
-    new_contour = np.append(new_contour, [new_contour[0]], axis=0)  # 最初の点を追加
-
     # 点の追加
     new_contour_adjusted = alter_points(new_contour, num_points=num_points)
+
+    assert not np.allclose(new_contour[0], new_contour[-1]), "closed"
+    assert not np.allclose(new_contour_adjusted[0], new_contour_adjusted[-1]), "closed"
+
+    new_contour_adjusted = np.append(
+        new_contour_adjusted, [new_contour_adjusted[0]], axis=0
+    )
 
     # 裏表（上下）の判定・反転
     if is_reverse(new_contour_adjusted):

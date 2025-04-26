@@ -47,8 +47,11 @@ def create_svg(
 
 
 # 点の取り方を変える
-# points = [[x1, y1], [x2, y2], ..., [xn, yn], [x1, y1]]
+# points = [[x1, y1], [x2, y2], ..., [xn, yn]]
 def alter_points(points: np.ndarray, num_points: int = 1000) -> np.ndarray:
+    assert not np.allclose(points[0], points[-1]), "最初の点と最後の点が同じです"
+    points = np.append(points, [points[0]], axis=0)  # 最初の点を最後に追加して閉じる
+
     # 1. 輪郭の長さを計算する
     # 2. 同時に各点までの始点からの距離を計算する
     # 3. 輪郭の長さをNUM_POINTSで割り，点を等間隔に配置する
@@ -83,9 +86,6 @@ def alter_points(points: np.ndarray, num_points: int = 1000) -> np.ndarray:
             points[index][1] + ratio * (points[index + 1][1] - points[index][1]),
         )
         new_points.append(new_point)
-
-    # 最後の点を追加して閉じる
-    new_points.append(new_points[0])
 
     return np.array(new_points)
 
