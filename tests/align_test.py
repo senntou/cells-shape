@@ -107,7 +107,6 @@ def contour_data_provider():
     for id in ids:
         value = data["nuc"][id]
         points = value["contour"]
-        points.append(points[0])
         points = np.array(points)
         contours.append(points)
 
@@ -175,12 +174,12 @@ def test_get_inside_points_square():
     inside_points = get_inside_points(contour, resolution=0.1)
 
     assert len(inside_points) > 0, "内側の点が見つかりません。"
-    assert np.all(inside_points[:, 0] >= 0) and np.all(
-        inside_points[:, 0] <= 1
-    ), "X座標が範囲外です。"
-    assert np.all(inside_points[:, 1] >= 0) and np.all(
-        inside_points[:, 1] <= 1
-    ), "Y座標が範囲外です。"
+    assert np.all(inside_points[:, 0] >= 0) and np.all(inside_points[:, 0] <= 1), (
+        "X座標が範囲外です。"
+    )
+    assert np.all(inside_points[:, 1] >= 0) and np.all(inside_points[:, 1] <= 1), (
+        "Y座標が範囲外です。"
+    )
 
     contour = np.append(contour, [contour[0]], axis=0)  # 閉じるために最初の点を追加
 
@@ -223,9 +222,9 @@ def test_get_inside_points_triangle():
     inside_points = get_inside_points(contour, resolution=0.1)
 
     assert len(inside_points) > 0, "内側の点が見つかりません。"
-    assert np.all(inside_points[:, 0] >= 0) and np.all(
-        inside_points[:, 0] <= 1
-    ), "X座標が範囲外です。"
+    assert np.all(inside_points[:, 0] >= 0) and np.all(inside_points[:, 0] <= 1), (
+        "X座標が範囲外です。"
+    )
     assert np.all(inside_points[:, 1] >= 0) and np.all(
         inside_points[:, 1] <= np.sqrt(3) / 2
     ), "Y座標が範囲外です。"

@@ -12,7 +12,6 @@ from utils import create_svg, is_out_of_image, plot_scatter
 
 # points = [[x1, y1], [x2, y2], ..., [xn, yn]]
 def convert_points_format(points: list) -> np.ndarray:
-    points.append(points[0])  # 閉じるために最初の点を追加
     return np.array(points)
 
 
@@ -35,7 +34,7 @@ def get_contours_aligned(contours_data: dict[str, ContourData]) -> np.ndarray:
 
         contours_plane.append(points)  # 全体描画のため
 
-        points, points_adjusted = align_contour(points)
+        points, points_adjusted = align_contour(points, num_points=100)
 
         # create_svg(points, key, show_number=True)
 

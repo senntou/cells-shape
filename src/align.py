@@ -1,4 +1,3 @@
-from matplotlib.pyplot import xcorr
 import numpy as np
 from matplotlib.path import Path
 
@@ -12,9 +11,9 @@ from utils import alter_points
 def align_contour(
     contour: np.ndarray, num_points: int = 1000
 ) -> tuple[np.ndarray, np.ndarray]:
-    assert np.allclose(contour[0], contour[-1]), (
-        "多角形の頂点は閉じている必要があります"
-    )
+    assert not np.allclose(contour[0], contour[-1]), "輪郭が閉じています。"
+
+    contour = np.append(contour, [contour[0]], axis=0)
 
     # 並進
     centroid = calculate_polygon_centroid(contour)
@@ -172,10 +171,10 @@ def is_reverse(contour) -> bool:
     assert np.allclose(contour[0], contour[-1]), (
         "多角形の頂点は閉じている必要があります。"
     )
-    assert np.allclose(
-        np.linalg.norm(contour[0] - contour[1]),
-        np.linalg.norm(contour[-1] - contour[-2]),
-    ), "輪郭線の長さが等間隔ではありません。"
+    # assert np.allclose(
+    #     np.linalg.norm(contour[0] - contour[1]),
+    #     np.linalg.norm(contour[-1] - contour[-2]),
+    # ), "輪郭線の長さが等間隔ではありません。"
 
     # 上側と下側の輪郭点の数をカウント
     upper_count = np.sum(contour[:-1][:, 1] > 0)

@@ -13,7 +13,6 @@ def test_align_contour():
             [-length, length],
             [-length, -length],
             [length, -length],
-            [length, length],
         ]
     )
 
